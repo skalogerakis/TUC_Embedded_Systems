@@ -228,9 +228,9 @@ END GROUP
                 0x00000068                __vector_20
                 0x0000006c                . = ALIGN (0x2)
  *(.text.*)
- .text.timerEnabler
+ .text.loopCounter
                 0x0000006c       0x24 main.o
-                0x0000006c                timerEnabler
+                0x0000006c                loopCounter
  .text.main     0x00000090        0x4 main.o
                 0x00000090                main
                 0x00000094                . = ALIGN (0x2)
@@ -358,33 +358,34 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x5e1
+.debug_info     0x00000000      0x5f9
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x52e C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega16a/avr5/crtatmega16a.o
- .debug_info    0x0000052e       0xb3 main.o
+ .debug_info    0x0000052e       0xcb main.o
 
-.debug_abbrev   0x00000000      0x561
+.debug_abbrev   0x00000000      0x579
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x4e7 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega16a/avr5/crtatmega16a.o
- .debug_abbrev  0x000004e7       0x7a main.o
+ .debug_abbrev  0x000004e7       0x92 main.o
 
-.debug_line     0x00000000      0x1f0
+.debug_line     0x00000000      0x1ee
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x115 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega16a/avr5/crtatmega16a.o
- .debug_line    0x00000115       0xdb main.o
+ .debug_line    0x00000115       0xd9 main.o
 
 .debug_frame    0x00000000       0x34
  *(.debug_frame)
  .debug_frame   0x00000000       0x34 main.o
 
-.debug_str      0x00000000      0x300
+.debug_str      0x00000000      0x2fd
  *(.debug_str)
  .debug_str     0x00000000      0x1af C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega16a/avr5/crtatmega16a.o
- .debug_str     0x000001af      0x151 main.o
-                                0x185 (size before relaxing)
+ .debug_str     0x000001af      0x14e main.o
+                                0x182 (size before relaxing)
 
-.debug_loc
+.debug_loc      0x00000000       0x4d
  *(.debug_loc)
+ .debug_loc     0x00000000       0x4d main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -404,11 +405,11 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x18
+.debug_ranges   0x00000000       0x30
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x18 main.o
+ .debug_ranges  0x00000000       0x30 main.o
 
 .debug_macro
  *(.debug_macro)
-OUTPUT(Lab1_Timer.elf elf32-avr)
+OUTPUT(Lab1_Loop.elf elf32-avr)
 LOAD linker stubs

@@ -1,8 +1,14 @@
+
 /*
+ * COURSE: EMBEDDED SYSTEMS, HRY411 
+ * 
  * Lab1_Timer.c
  *
+ * Lab1: BLINKING LED EVERY SEC USING LOOPS
+ * 
+ * Created at : ATMELSTUDIO
  * Created: 3/6/2019 11:48:44 AM
- * Author : user
+ * Authors : Stefanos Kalogerakis, Aris Zervakis
  */ 
 
 #include <avr/io.h>
@@ -10,11 +16,7 @@
 //#define F_CPU 1000000UL	//Define cpu clock
 //#define PRESCALER 64
 
-
-int main(void)
-{
-    //The following code will produce a blinking led every second in the same output.
-	
+void timerEnabler(){
 	//Initialize port for the LED's
 	DDRB = 0b00000001;
 	PORTB = 0b00000000;
@@ -36,11 +38,19 @@ int main(void)
 			
 			We could also set the counter dynamically but we avoid that to compute less calculations as we meet the requirements as is
 		*/
-		if(TCNT1 > 15,624){
+		if(TCNT1 > 15624){
 			TCNT1 = 0;	//Reset TCNT
 			PORTB ^= 1 << PINB0;
 		}
 		
     }
+}
+
+
+int main(void)
+{
+    //The following code will produce a blinking led every second in the same output.
+	timerEnabler();
+	
 }
 

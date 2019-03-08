@@ -1,5 +1,5 @@
 
-Lab1_Timer.elf:     file format elf32-avr
+Lab1_Loop.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
@@ -13,17 +13,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .debug_aranges 00000028  00000000  00000000  00000158  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000005e1  00000000  00000000  00000180  2**0
+  5 .debug_info   000005f9  00000000  00000000  00000180  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000561  00000000  00000000  00000761  2**0
+  6 .debug_abbrev 00000579  00000000  00000000  00000779  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000001f0  00000000  00000000  00000cc2  2**0
+  7 .debug_line   000001ee  00000000  00000000  00000cf2  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000034  00000000  00000000  00000eb4  2**2
+  8 .debug_frame  00000034  00000000  00000000  00000ee0  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000300  00000000  00000000  00000ee8  2**0
+  9 .debug_str    000002fd  00000000  00000000  00000f14  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_ranges 00000018  00000000  00000000  000011e8  2**0
+ 10 .debug_loc    0000004d  00000000  00000000  00001211  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000030  00000000  00000000  0000125e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -64,61 +66,65 @@ Disassembly of section .text:
 00000068 <__bad_interrupt>:
   68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
-0000006c <timerEnabler>:
-//#define F_CPU 1000000UL	//Define cpu clock
-//#define PRESCALER 64
+0000006c <loopCounter>:
 
-void timerEnabler(){
-	//Initialize port for the LED's
+#include <avr/io.h>
+
+void loopCounter(){
+	//Initialize port for the LED
 	DDRB = 0b00000001;
   6c:	81 e0       	ldi	r24, 0x01	; 1
   6e:	87 bb       	out	0x17, r24	; 23
 	PORTB = 0b00000000;
   70:	18 ba       	out	0x18, r1	; 24
-	//unsigned int delay = 1;
-	/*
-		We use 16bit TIMER1. We also want to prescale clock so we need to choose Timer/Counter1 Control Register B.
-		Prescale with 64 so we need to activate cs11 and cs10( More info in atmega16A datasheet)
+		http://web.csulb.edu/~hill/ee346/Lectures/06%20AVR%20Looping.pdf
 	*/
-	TCCR1B |= 1<<CS10 | 1<<CS11;
-  72:	8e b5       	in	r24, 0x2e	; 46
-  74:	83 60       	ori	r24, 0x03	; 3
-  76:	8e bd       	out	0x2e, r24	; 46
-			
-			We could also set the counter dynamically but we avoid that to compute less calculations as we meet the requirements as is
-		*/
-		if(TCNT1 > 15624){
-			TCNT1 = 0;	//Reset TCNT
-			PORTB ^= 1 << PINB0;
-  78:	21 e0       	ldi	r18, 0x01	; 1
-			The we use the following formula found in the link below to adjust our counter Timer_Count = Delay/clock_period) - 1 = 15,624 for a 64 prescaler, 1s delay and 1Mh clock frequency.
-			http://maxembedded.com/2011/06/introduction-to-avr-timers/
-			
-			We could also set the counter dynamically but we avoid that to compute less calculations as we meet the requirements as is
-		*/
-		if(TCNT1 > 15624){
-  7a:	8c b5       	in	r24, 0x2c	; 44
-  7c:	9d b5       	in	r25, 0x2d	; 45
-  7e:	89 30       	cpi	r24, 0x09	; 9
-  80:	9d 43       	sbci	r25, 0x3D	; 61
-  82:	d8 f3       	brcs	.-10     	; 0x7a <timerEnabler+0xe>
-			TCNT1 = 0;	//Reset TCNT
-  84:	1d bc       	out	0x2d, r1	; 45
-  86:	1c bc       	out	0x2c, r1	; 44
-			PORTB ^= 1 << PINB0;
-  88:	88 b3       	in	r24, 0x18	; 24
-  8a:	82 27       	eor	r24, r18
-  8c:	88 bb       	out	0x18, r24	; 24
-  8e:	f5 cf       	rjmp	.-22     	; 0x7a <timerEnabler+0xe>
+	while(1){
+		for(uint32_t i= 0; i< 166666; i++){
+			if(i == 166666-1){
+				PORTB ^= 1 << PINB0;
+  72:	21 e0       	ldi	r18, 0x01	; 1
+ * Authors : Stefanos Kalogerakis, Aris Zervakis
+ */ 
+
+#include <avr/io.h>
+
+void loopCounter(){
+  74:	89 e0       	ldi	r24, 0x09	; 9
+  76:	9b e8       	ldi	r25, 0x8B	; 139
+  78:	a2 e0       	ldi	r26, 0x02	; 2
+  7a:	b0 e0       	ldi	r27, 0x00	; 0
+  7c:	04 c0       	rjmp	.+8      	; 0x86 <loopCounter+0x1a>
+		http://web.csulb.edu/~hill/ee346/Lectures/06%20AVR%20Looping.pdf
+	*/
+	while(1){
+		for(uint32_t i= 0; i< 166666; i++){
+			if(i == 166666-1){
+				PORTB ^= 1 << PINB0;
+  7e:	88 b3       	in	r24, 0x18	; 24
+  80:	82 27       	eor	r24, r18
+  82:	88 bb       	out	0x18, r24	; 24
+  84:	f7 cf       	rjmp	.-18     	; 0x74 <loopCounter+0x8>
+  86:	01 97       	sbiw	r24, 0x01	; 1
+  88:	a1 09       	sbc	r26, r1
+  8a:	b1 09       	sbc	r27, r1
+		So we lose 2 cycles in each loop but it is translated in some ìs of time.
+		http://web.csulb.edu/~hill/ee346/Lectures/06%20AVR%20Looping.pdf
+	*/
+	while(1){
+		for(uint32_t i= 0; i< 166666; i++){
+			if(i == 166666-1){
+  8c:	e1 f7       	brne	.-8      	; 0x86 <loopCounter+0x1a>
+  8e:	f7 cf       	rjmp	.-18     	; 0x7e <loopCounter+0x12>
 
 00000090 <main>:
-
 
 int main(void)
 {
     //The following code will produce a blinking led every second in the same output.
-	timerEnabler();
-  90:	0e 94 36 00 	call	0x6c	; 0x6c <timerEnabler>
+	
+	loopCounter();
+  90:	0e 94 36 00 	call	0x6c	; 0x6c <loopCounter>
 
 00000094 <_exit>:
   94:	f8 94       	cli
